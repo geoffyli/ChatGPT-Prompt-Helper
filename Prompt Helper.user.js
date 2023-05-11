@@ -19,20 +19,20 @@ var paramTextarea = null
 var templateName = "Default"
 
 function getSelectedValue() {
-    var element = document.getElementsByTagName("select")[0];
-    var selectedValue = element.options[element.selectedIndex].value;
-    return selectedValue;
+    var element = document.getElementsByTagName("select")[0]
+    var selectedValue = element.options[element.selectedIndex].value
+    return selectedValue
 }
 
 function getTemplateObject(templateName){
     let templates = GM_getValue(templateName.substring(0, templateName.indexOf(":")))
     for (const template of templates) {
         if (template.name == templateName.substring(templateName.indexOf(":") + 2)) {
-            return template;
+            return template
         }
     }
     // Return null or undefined if the template is not found
-    return null;
+    return null
 }
 
 function assemblePrompt(){
@@ -40,17 +40,15 @@ function assemblePrompt(){
     let param_text = paramTextarea.value
     let params = param_text.split('|').map(str => str.trim())
     params.forEach((item) => {
-        templateText = templateText.replace("$", item);
-    });
+        templateText = templateText.replace("$", item)
+    })
     promptTextarea.value = templateText
-
-
 }
 
 function createListeners(templateSelector, paramTextarea){
     // template selector listener
     templateSelector.addEventListener('change', function() {
-        templateName = getSelectedValue();
+        templateName = getSelectedValue()
         if (templateName != "Default"){
             paramTextarea.disabled = false
             let buttons = document.getElementsByTagName('button')
@@ -78,24 +76,24 @@ function createListeners(templateSelector, paramTextarea){
             promptTextarea.value = ""
         }
 
-    });
+    })
 
     // parameter text area listener
     paramTextarea.addEventListener('input', function(){
         assemblePrompt()
-    });
+    })
     paramTextarea.addEventListener('keydown', function(event){
         if (event.keyCode === 13 && !event.shiftKey) {
-            event.preventDefault();
+            event.preventDefault()
             // Enter key was pressed and shift key was not held down
             let buttons = document.getElementsByTagName('button')
             let button = buttons[buttons.length - 1]
             // Get the button coordination
-            var rect = button.getBoundingClientRect();
-            var x = rect.left + (rect.width / 2);
-            var y = rect.top + (rect.height / 2);
+            let rect = button.getBoundingClientRect()
+            let x = rect.left + (rect.width / 2)
+            let y = rect.top + (rect.height / 2)
             // Dispatch click event
-            button.dispatchEvent(new MouseEvent('click', {clientX: x, clientY: y}));
+            button.dispatchEvent(new MouseEvent('click', {clientX: x, clientY: y}))
             // Clear the parameter textarea content and the template selector.
             paramTextarea.blur()
             paramTextarea.value = ""
@@ -103,7 +101,19 @@ function createListeners(templateSelector, paramTextarea){
             paramTextarea.disabled = true
             templateSelector.selectedIndex = 0
         }
-    });
+    })
+
+    // submit button listener
+    let buttons = document.getElementsByTagName('button')
+    let button = buttons[buttons.length - 1]
+    button.addEventListener('click', function(event){
+        // Clear the parameter textarea content and the template selector.
+        paramTextarea.blur()
+        paramTextarea.value = ""
+        paramTextarea.placeholder = "Select a template"
+        paramTextarea.disabled = true
+        templateSelector.selectedIndex = 0
+    })
 }
 
 function createHTMLComponents(jNode){
@@ -135,8 +145,6 @@ function createHTMLComponents(jNode){
     helperDiv.insertBefore(paramTextarea, helperDiv.childNodes[0])
 
     // Template selector
-
-
     let templateSelector = document.createElement("select")
     templateSelector.innerHTML = concatSelectorHTML()
     templateSelector.setAttribute("class", "h-full flex w-full bg-white dark:text-white dark:bg-gray-700 p-3 rounded-md dark:hover:bg-gray-700")
@@ -148,7 +156,6 @@ function createHTMLComponents(jNode){
 
     // Create listeners
     createListeners(templateSelector, paramTextarea)
-
 }
 
 function concatSelectorHTML(){
@@ -160,19 +167,15 @@ function concatSelectorHTML(){
             selectorHTML = selectorHTML.concat('<option value="', group, ': ', template.name, '\">', template.name, '</option>')
         }
     }
-        console.log(selectorHTML)
-
     return selectorHTML
 }
-
-
 
 (function() {
     'use strict';
     window.addEventListener('load', function(){
         waitForKeyElements ("textarea.m-0.w-full.resize-none.border-0.bg-transparent.p-0.pr-7.focus\\:ring-0.focus-visible\\:ring-0.dark\\:bg-transparent.pl-2.md\\:pl-0", createHTMLComponents);
-    });
-})();
+    })
+})()
 
 // util functions
 
