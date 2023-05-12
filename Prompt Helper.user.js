@@ -24,7 +24,7 @@ function getSelectedValue() {
     return selectedValue
 }
 
-function getTemplateObject(templateName){
+function getTemplateObject(templateName) {
     let templates = GM_getValue(templateName.substring(0, templateName.indexOf(":")))
     for (const template of templates) {
         if (template.name == templateName.substring(templateName.indexOf(":") + 2)) {
@@ -35,7 +35,7 @@ function getTemplateObject(templateName){
     return null
 }
 
-function assemblePrompt(){
+function assemblePrompt() {
     let templateText = getTemplateObject(templateName).text
     let param_text = paramTextarea.value
     let params = param_text.split('|').map(str => str.trim())
@@ -45,56 +45,53 @@ function assemblePrompt(){
     promptTextarea.value = templateText
 }
 
-function createListeners(templateSelector, paramTextarea){
+function createListeners(templateSelector, paramTextarea) {
     // template selector listener
     templateSelector.addEventListener('change', function() {
         templateName = getSelectedValue()
-        if (templateName != "Default"){
+        if (templateName != "Default") {
             paramTextarea.disabled = false
             let buttons = document.getElementsByTagName('button')
             let button = buttons[buttons.length - 1]
             button.removeAttribute('disabled')
-            // Set prompt text area value.
-            let templateText
-            if (templateName != "Default"){
-                templateText = getTemplateObject(templateName).text
-            }else{
-                templateText = ""
-            }
-            promptTextarea.value = templateText
-            // Set parameter text area place holder.
+                // Set prompt text area value.
+            promptTextarea.value = getTemplateObject(templateName).text
+                // Set parameter text area place holder.
             let placeholders = getTemplateObject(templateName).placeholders
             let placeholderStr = ""
             placeholders.forEach((item) => {
                 placeholderStr = placeholderStr.concat("[", item, "]", " | ")
             });
-            placeholderStr = placeholderStr.slice(0, -2)
-            paramTextarea.placeholder = placeholderStr
-        }else{
-            paramTextarea.placeholder = "Select a template"
+            paramTextarea.placeholder = placeholderStr.slice(0, -2)
+                // Make parameter text area focused
+            paramTextarea.focus()
+        } else {
             paramTextarea.disabled = true
             promptTextarea.value = ""
+            paramTextarea.placeholder = "Select a template"
+                // Make prompt text area focused
+            promptTextarea.focus()
         }
 
     })
 
     // parameter text area listener
-    paramTextarea.addEventListener('input', function(){
+    paramTextarea.addEventListener('input', function() {
         assemblePrompt()
     })
-    paramTextarea.addEventListener('keydown', function(event){
+    paramTextarea.addEventListener('keydown', function(event) {
         if (event.keyCode === 13 && !event.shiftKey) {
             event.preventDefault()
-            // Enter key was pressed and shift key was not held down
+                // Enter key was pressed and shift key was not held down
             let buttons = document.getElementsByTagName('button')
             let button = buttons[buttons.length - 1]
-            // Get the button coordination
+                // Get the button coordination
             let rect = button.getBoundingClientRect()
             let x = rect.left + (rect.width / 2)
             let y = rect.top + (rect.height / 2)
-            // Dispatch click event
-            button.dispatchEvent(new MouseEvent('click', {clientX: x, clientY: y}))
-            // Clear the parameter textarea content and the template selector.
+                // Dispatch click event
+            button.dispatchEvent(new MouseEvent('click', { clientX: x, clientY: y }))
+                // Clear the parameter textarea content and the template selector.
             paramTextarea.blur()
             paramTextarea.value = ""
             paramTextarea.placeholder = "Select a template"
@@ -106,7 +103,7 @@ function createListeners(templateSelector, paramTextarea){
     // submit button listener
     let buttons = document.getElementsByTagName('button')
     let button = buttons[buttons.length - 1]
-    button.addEventListener('click', function(event){
+    button.addEventListener('click', function(event) {
         // Clear the parameter textarea content and the template selector.
         paramTextarea.blur()
         paramTextarea.value = ""
@@ -116,7 +113,7 @@ function createListeners(templateSelector, paramTextarea){
     })
 }
 
-function createHTMLComponents(jNode){
+function createHTMLComponents(jNode) {
     // Get prompt text area and the parent div.
     promptTextarea = document.getElementsByTagName("textarea")[0]
     let parentDiv = promptTextarea.parentNode
@@ -158,12 +155,12 @@ function createHTMLComponents(jNode){
     createListeners(templateSelector, paramTextarea)
 }
 
-function concatSelectorHTML(){
+function concatSelectorHTML() {
     let selectorHTML = '<option value="Default">Default</option>'
     let groups = GM_listValues()
     for (let group of groups) {
-        selectorHTML = selectorHTML.concat('<optgroup label="', group,'">')
-        for (let template of GM_getValue(group)){
+        selectorHTML = selectorHTML.concat('<optgroup label="', group, '">')
+        for (let template of GM_getValue(group)) {
             selectorHTML = selectorHTML.concat('<option value="', group, ': ', template.name, '\">', template.name, '</option>')
         }
     }
@@ -172,8 +169,8 @@ function concatSelectorHTML(){
 
 (function() {
     'use strict';
-    window.addEventListener('load', function(){
-        waitForKeyElements ("textarea.m-0.w-full.resize-none.border-0.bg-transparent.p-0.pr-7.focus\\:ring-0.focus-visible\\:ring-0.dark\\:bg-transparent.pl-2.md\\:pl-0", createHTMLComponents);
+    window.addEventListener('load', function() {
+        waitForKeyElements("textarea.m-0.w-full.resize-none.border-0.bg-transparent.p-0.pr-7.focus\\:ring-0.focus-visible\\:ring-0.dark\\:bg-transparent.pl-2.md\\:pl-0", createHTMLComponents);
     })
 })()
 
@@ -182,68 +179,66 @@ function concatSelectorHTML(){
 /*--- waitForKeyElements():  A utility function, for Greasemonkey scripts,
     that detects and handles AJAXed content.
 */
-function waitForKeyElements (
-selectorTxt,
- actionFunction,
- bWaitOnce,
- iframeSelector
+function waitForKeyElements(
+    selectorTxt,
+    actionFunction,
+    bWaitOnce,
+    iframeSelector
 ) {
     var targetNodes, btargetsFound;
 
     if (typeof iframeSelector == "undefined")
         targetNodes = $(selectorTxt);
     else
-        targetNodes = $(iframeSelector).contents ()
-            .find (selectorTxt);
+        targetNodes = $(iframeSelector).contents()
+        .find(selectorTxt);
 
-    if (targetNodes  &&  targetNodes.length > 0) {
-        btargetsFound   = true;
+    if (targetNodes && targetNodes.length > 0) {
+        btargetsFound = true;
         /*--- Found target node(s).  Go through each and act if they
             are new.
         */
-        targetNodes.each ( function () {
-            var jThis        = $(this);
-            var alreadyFound = jThis.data ('alreadyFound')  ||  false;
+        targetNodes.each(function() {
+            var jThis = $(this);
+            var alreadyFound = jThis.data('alreadyFound') || false;
 
             if (!alreadyFound) {
                 //--- Call the payload function.
-                var cancelFound     = actionFunction (jThis);
+                var cancelFound = actionFunction(jThis);
                 if (cancelFound)
-                    btargetsFound   = false;
+                    btargetsFound = false;
                 else
-                    jThis.data ('alreadyFound', true);
+                    jThis.data('alreadyFound', true);
             }
-        } );
-    }
-    else {
-        btargetsFound   = false;
+        });
+    } else {
+        btargetsFound = false;
     }
 
     //--- Get the timer-control variable for this selector.
-    var controlObj      = waitForKeyElements.controlObj  ||  {};
-    var controlKey      = selectorTxt.replace (/[^\w]/g, "_");
-    var timeControl     = controlObj [controlKey];
+    var controlObj = waitForKeyElements.controlObj || {};
+    var controlKey = selectorTxt.replace(/[^\w]/g, "_");
+    var timeControl = controlObj[controlKey];
 
     //--- Now set or clear the timer as appropriate.
-    if (btargetsFound  &&  bWaitOnce  &&  timeControl) {
+    if (btargetsFound && bWaitOnce && timeControl) {
         //--- The only condition where we need to clear the timer.
-        clearInterval (timeControl);
-        delete controlObj [controlKey]
-    }
-    else {
+        clearInterval(timeControl);
+        delete controlObj[controlKey]
+    } else {
         //--- Set a timer, if needed.
-        if ( ! timeControl) {
-            timeControl = setInterval ( function () {
-                waitForKeyElements (    selectorTxt,
-                                    actionFunction,
-                                    bWaitOnce,
-                                    iframeSelector
-                                   );
-            },
-                                       300
-                                      );
-            controlObj [controlKey] = timeControl;
+        if (!timeControl) {
+            timeControl = setInterval(function() {
+                    waitForKeyElements(selectorTxt,
+                        actionFunction,
+                        bWaitOnce,
+                        iframeSelector
+                    );
+                },
+                300
+            );
+            controlObj[controlKey] = timeControl;
         }
     }
-    waitForKeyElements.controlObj   = controlObj;
+    waitForKeyElements.controlObj = controlObj;
 }
