@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Prompt Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.3.1
+// @version      0.4.2
 // @description  Use pre-defined prompts in ChatGPT
 // @author       geoffyli
 // @match        https://chat.openai.com/*
 // @icon         https://chat.openai.com/favicon.ico
-// @require         http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js
+// @require      http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js
 // @grant GM_setValue
 // @grant GM_getValue
 // @grant GM_listValues
@@ -68,8 +68,9 @@ function createListeners(templateSelector, paramTextarea) {
         } else {
             paramTextarea.disabled = true
             promptTextarea.value = ""
-            paramTextarea.placeholder = "Select a template"
+            paramTextarea.placeholder = "Please select a template."
                 // Make prompt text area focused
+            promptTextarea.placeholder = "Send a message with prompt helper."
             promptTextarea.focus()
         }
 
@@ -94,9 +95,11 @@ function createListeners(templateSelector, paramTextarea) {
                 // Clear the parameter textarea content and the template selector.
             paramTextarea.blur()
             paramTextarea.value = ""
-            paramTextarea.placeholder = "Select a template"
+            paramTextarea.placeholder = "Please select a template."
             paramTextarea.disabled = true
             templateSelector.selectedIndex = 0
+                // Set up prompt text area.
+            promptTextarea.placeholder = "Send a message with prompt helper."
             promptTextarea.focus()
         }
     })
@@ -108,9 +111,11 @@ function createListeners(templateSelector, paramTextarea) {
         // Clear the parameter textarea content and the template selector.
         paramTextarea.blur()
         paramTextarea.value = ""
-        paramTextarea.placeholder = "Select a template"
+        paramTextarea.placeholder = "Please select a template."
         paramTextarea.disabled = true
         templateSelector.selectedIndex = 0
+            // Set up prompt area
+        promptTextarea.placeholder = "Send a message with prompt helper."
         promptTextarea.focus()
     })
 
@@ -125,6 +130,7 @@ function createListeners(templateSelector, paramTextarea) {
 function createHTMLComponents(jNode) {
     // Get prompt text area and the parent div.
     promptTextarea = document.getElementsByTagName("textarea")[0]
+    promptTextarea.placeholder = "Send a message with prompt helper."
     let parentDiv = promptTextarea.parentNode
 
     // Create the divier.
@@ -146,7 +152,7 @@ function createHTMLComponents(jNode) {
     paramTextarea.style.marginBottom = "5px"
     paramTextarea.style.height = "50px"
     paramTextarea.style.display = "inline-block"
-    paramTextarea.placeholder = "Select a template"
+    paramTextarea.placeholder = "Please select a template."
     paramTextarea.disabled = true
     helperDiv.insertBefore(paramTextarea, helperDiv.childNodes[0])
 
