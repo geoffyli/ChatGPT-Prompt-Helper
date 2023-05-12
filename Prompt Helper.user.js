@@ -97,6 +97,7 @@ function createListeners(templateSelector, paramTextarea) {
             paramTextarea.placeholder = "Select a template"
             paramTextarea.disabled = true
             templateSelector.selectedIndex = 0
+            promptTextarea.focus()
         }
     })
 
@@ -110,7 +111,15 @@ function createListeners(templateSelector, paramTextarea) {
         paramTextarea.placeholder = "Select a template"
         paramTextarea.disabled = true
         templateSelector.selectedIndex = 0
+        promptTextarea.focus()
     })
+
+    // document key down listener
+    document.addEventListener("keydown", function(event) {
+        if (event.ctrlKey && event.key === "/") {
+            templateSelector.focus()
+        }
+    });
 }
 
 function createHTMLComponents(jNode) {
