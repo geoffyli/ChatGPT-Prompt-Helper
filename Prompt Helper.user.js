@@ -97,6 +97,8 @@ function createListeners(templateSelector, paramTextarea) {
             paramTextarea.value = ""
             paramTextarea.placeholder = "Please select a template."
             paramTextarea.disabled = true
+                // Set the submit button disabled.
+            button.disabled = true
             templateSelector.selectedIndex = 0
                 // Set up prompt text area.
             promptTextarea.placeholder = "Send a message with prompt helper."
@@ -137,7 +139,8 @@ function createHTMLComponents(jNode) {
     let divider = document.createElement("hr")
     divider.setAttribute("class", "rounded")
     divider.style.marginRight = "10px"
-    divider.style.marginBottom = "6px"
+    divider.style.marginBottom = "13px"
+
     parentDiv.insertBefore(divider, parentDiv.childNodes[0])
 
     // Create Prompt Helper Div
@@ -185,7 +188,7 @@ function concatSelectorHTML() {
 (function() {
     'use strict';
     window.addEventListener('load', function() {
-        waitForKeyElements("textarea.m-0.w-full.resize-none.border-0.bg-transparent.p-0.pr-7.focus\\:ring-0.focus-visible\\:ring-0.dark\\:bg-transparent.pl-2.md\\:pl-0", createHTMLComponents);
+        waitForKeyElements("#prompt-textarea", createHTMLComponents);
     })
 })()
 
